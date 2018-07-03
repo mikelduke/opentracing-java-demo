@@ -1,5 +1,6 @@
 package com.mikelduke.vhs.catalog;
 
+import io.jaegertracing.LogData;
 import io.jaegertracing.reporters.InMemoryReporter;
 import io.jaegertracing.reporters.Reporter;
 import io.jaegertracing.samplers.ConstSampler;
@@ -14,7 +15,13 @@ public class TracingConfiguration {
             @Override
             public void report(io.jaegertracing.Span span) {
                 super.report(span);
-                System.out.println("Span Reported: " + span + " Tags: " + span.getTags());
+                String logs = "";
+                for (LogData l : span.getLogs()) {
+                    logs = "\n\t" + logs + l.getMessage();
+                };
+
+                System.out.println("Span Reported: " + span 
+                        + " Tags: " + span.getTags() + " \nLogs: " + logs);
             }
         };
         
