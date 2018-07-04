@@ -17,7 +17,7 @@ public class TracingConfiguration {
                 super.report(span);
                 String logs = "";
                 for (LogData l : span.getLogs()) {
-                    logs = "\n\t" + logs + l.getMessage();
+                    logs += "\n\t" + l.getTime() + ": " + l.getMessage();
                 };
 
                 System.out.println("Span Reported: " + span 

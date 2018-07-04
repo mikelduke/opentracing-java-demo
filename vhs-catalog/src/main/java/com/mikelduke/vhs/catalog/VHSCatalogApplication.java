@@ -27,6 +27,9 @@ public class VHSCatalogApplication {
 
 		OpenTracingSparkFilters sparkTracingFilters = new OpenTracingSparkFilters();
 		Spark.before(sparkTracingFilters.before());
+		Spark.before((req, res) -> {
+			req.headers().forEach(System.out::println);
+		});
 		Spark.afterAfter(sparkTracingFilters.afterAfter());
 		Spark.exception(Exception.class, sparkTracingFilters.exception());
 
