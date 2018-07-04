@@ -21,7 +21,7 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
-	mavenLocal()
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 
@@ -29,10 +29,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile 'com.mikelduke:jtest-data:0.0.1-SNAPSHOT'
+	compile('com.mikelduke:jtest-data:0.0.1-SNAPSHOT')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('com.h2database:h2')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-
 }
