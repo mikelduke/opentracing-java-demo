@@ -30,12 +30,13 @@ public class VHSCatalogApplication {
 		Spark.afterAfter(sparkTracingFilters.afterAfter());
 		Spark.exception(Exception.class, sparkTracingFilters.exception());
 
-		Spark.get("movies/:id", VHSCatalogApplication::getMovie, VHSCatalogApplication::toJson);
+		Spark.get("movies/:id", "application/json", VHSCatalogApplication::getMovie, VHSCatalogApplication::toJson);
 		
 		LOGGER.logp(Level.INFO, CLAZZ, "main", "Server started on port " + Spark.port());
 	}
 
 	private static Object getMovie(Request req, Response res) {
+		res.type("application/json");
 		Span span = req.attribute(OpenTracingSparkFilters.SERVER_SPAN);
 		span.log("getMovie: " + req.params("id"));
 		
