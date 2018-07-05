@@ -1,7 +1,7 @@
 package com.mikelduke.vhs.members;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import io.jaegertracing.LogData;
 import io.jaegertracing.reporters.InMemoryReporter;
@@ -10,7 +10,7 @@ import io.jaegertracing.samplers.ConstSampler;
 import io.jaegertracing.samplers.Sampler;
 import io.opentracing.Tracer;
 
-@SpringBootApplication
+@Configuration
 public class TracerConfig {
 
 	@Bean
