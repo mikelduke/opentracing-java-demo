@@ -33,6 +33,7 @@ public class VHSCatalogApplication {
 		Spark.afterAfter(sparkTracingFilters.afterAfter());
 		Spark.exception(Exception.class, sparkTracingFilters.exception());
 
+		Spark.get("movies", "application/json", (req, res) -> movies.getMovies(), VHSCatalogApplication::toJson);
 		Spark.get("movies/:id", "application/json", VHSCatalogApplication::getMovie, VHSCatalogApplication::toJson);
 		
 		LOGGER.logp(Level.INFO, CLAZZ, "main", "Server started on port " + Spark.port());

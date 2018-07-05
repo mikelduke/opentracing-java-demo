@@ -24,7 +24,8 @@
             "stopOnEntry": false,
             "mainClass": "com.mikelduke.vhs.catalog.VHSCatalogApplication",
             "projectName": "vhs-catalog",
-            "args": ""
+            "args": "",
+            "vmArgs": "-Djaeger.system.out=true"
         },
         {
             "type": "java",

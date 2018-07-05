@@ -5,12 +5,27 @@ import io.jaegertracing.reporters.InMemoryReporter;
 import io.jaegertracing.reporters.Reporter;
 import io.jaegertracing.samplers.ConstSampler;
 import io.jaegertracing.samplers.Sampler;
+import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 
 public class TracingConfiguration {
+
+    private static boolean enableConsoleReporter = Boolean.parseBoolean(EnvUtil.getEnv("jaeger.system.out", "false"));
     
     public static void configureGlobalTracer() {
-		//TODO Use real reported to istio tracing
+
+        Tracer tracer;
+
+        if (enableConsoleReporter) {
+            tracer = getConsoleTracer();
+        } else {
+            tracer = getTracer();
+        }
+
+        GlobalTracer.register(tracer);
+    }
+    
+    private static Tracer getConsoleTracer() {
 		Reporter reporter = new InMemoryReporter() {
             @Override
             public void report(io.jaegertracing.Span span) {
@@ -31,6 +46,10 @@ public class TracingConfiguration {
                 .withSampler(sampler)
                 .build();
 
-        GlobalTracer.register(tracer);
-	}
+        return tracer;
+    }
+
+    private static Tracer getTracer() {
+        return null;
+    }
 }
