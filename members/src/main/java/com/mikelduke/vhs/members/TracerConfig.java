@@ -1,5 +1,6 @@
 package com.mikelduke.vhs.members;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,9 +14,9 @@ import io.opentracing.Tracer;
 @Configuration
 public class TracerConfig {
 
-	@Bean
+    @Bean
+    @ConditionalOnProperty(value="jaeger.system.out")
 	public Tracer getTracer() {
-        //TODO Use real reported to istio tracing
 		Reporter reporter = new InMemoryReporter() {
             @Override
             public void report(io.jaegertracing.Span span) {
