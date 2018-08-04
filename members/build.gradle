@@ -30,9 +30,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.mikelduke:jtest-data:0.0.1')
-	// compile group: 'io.opentracing.contrib', name: 'opentracing-spring-cloud-starter', version: '0.1.15'
 	compile group: 'io.jaegertracing', name: 'jaeger-core', version: '0.29.0'
-	compile 'io.opentracing.contrib:opentracing-spring-cloud-starter:0.1.15'
+	compile 'io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:0.1.5'
+	compile 'io.opentracing.contrib:opentracing-spring-jaeger-web-starter:0.1.5'
 
 
 	runtime('org.springframework.boot:spring-boot-devtools')
