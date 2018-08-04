@@ -1,16 +1,24 @@
 package com.mikelduke.vhs.catalog;
 
 import io.jaegertracing.LogData;
+import io.jaegertracing.metrics.InMemoryMetricsFactory;
+import io.jaegertracing.metrics.Metrics;
 import io.jaegertracing.reporters.InMemoryReporter;
+import io.jaegertracing.reporters.RemoteReporter;
 import io.jaegertracing.reporters.Reporter;
 import io.jaegertracing.samplers.ConstSampler;
 import io.jaegertracing.samplers.Sampler;
+import io.jaegertracing.senders.Sender;
+import io.jaegertracing.senders.UdpSender;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 
 public class TracingConfiguration {
 
     private static boolean enableConsoleReporter = Boolean.parseBoolean(EnvUtil.getEnv("jaeger.system.out", "false"));
+
+    private static String jaegerHost = EnvUtil.getEnv("jaeger.host", "localhost");
+    private static int jaegerPort = Integer.parseInt(EnvUtil.getEnv("jaeger.port", "6831"));
     
     public static void configureGlobalTracer() {
 
@@ -41,7 +49,7 @@ public class TracingConfiguration {
         };
         
         Sampler sampler = new ConstSampler(true);
-        io.opentracing.Tracer tracer = new io.jaegertracing.Tracer.Builder("sparkjava-test")
+        io.opentracing.Tracer tracer = new io.jaegertracing.Tracer.Builder("vhs-catalog")
                 .withReporter(reporter)
                 .withSampler(sampler)
                 .build();
@@ -50,6 +58,19 @@ public class TracingConfiguration {
     }
 
     private static Tracer getTracer() {
-        return null;
+        Sender sender = new UdpSender(jaegerHost, jaegerPort, 0);
+
+        Reporter reporter = new RemoteReporter.Builder()
+                .withSender(sender)
+                .withMetrics(new Metrics(new InMemoryMetricsFactory()))
+                .build();
+
+        Sampler sampler = new ConstSampler(true);
+        io.opentracing.Tracer tracer = new io.jaegertracing.Tracer.Builder("vhs-catalog")
+                .withReporter(reporter)
+                .withSampler(sampler)
+                .build();
+
+        return tracer;
     }
 }
