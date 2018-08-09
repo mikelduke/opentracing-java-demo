@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikelduke.opentracing.sparkjava.OpenTracingSparkFilters;
 
 import io.opentracing.Span;
+import io.opentracing.util.GlobalTracer;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -41,10 +42,19 @@ public class VHSCatalogApplication {
 
 	private static Object getMovie(Request req, Response res) {
 		res.type("application/json");
-		Span span = req.attribute(OpenTracingSparkFilters.SERVER_SPAN);
-		span.log("getMovie: " + req.params("id"));
 		
-		return movies.findOneById(Integer.parseInt(req.params("id")));
+		Span span = GlobalTracer.get()
+				.buildSpan("getMovie")
+				.asChildOf((Span) req.attribute(OpenTracingSparkFilters.SERVER_SPAN))
+				.withTag("moveId", req.params("id"))
+				.start();
+
+		Movie movie = movies.findOneById(Integer.parseInt(req.params("id")));
+		
+		span.log("movie: " + movie.getName());
+		span.finish();
+
+		return movie;
 	}
 
 	private static void loadMovies() {
