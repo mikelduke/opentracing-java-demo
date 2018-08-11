@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+
 @RestController
 public class MemberController {
 
@@ -40,6 +43,9 @@ public class MemberController {
 	@Value("${movieservice.scheme:http}")
 	String scheme;
 
+	@Autowired
+	Tracer tracer;
+
 	@GetMapping(value = "/members")
 	public List<Integer> getMember() {
 		List<Integer> ids = new ArrayList<>();
@@ -55,6 +61,13 @@ public class MemberController {
 
 	@GetMapping(value = "/members/{id}/rentals")
 	public List<MovieDTO> getMemberMovies(@PathVariable Integer id) {
+		tracer.activeSpan().setBaggageItem("testBaggageItem", "value");
+		
+		Span span = tracer.buildSpan("getMemberMovies")
+				.asChildOf(tracer.activeSpan())
+				.withTag("member-id", id)
+				.start();
+		
 		Member m = memberRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException());
 		List<MovieDTO> movies = new ArrayList<>();
 		movieRentalRepo.findAllByMember(m).forEach(mr -> {
@@ -70,6 +83,8 @@ public class MemberController {
 				e.printStackTrace();
 			}
 		});
+
+		span.finish();
 
 		return movies;
 	}

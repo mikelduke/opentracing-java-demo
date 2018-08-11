@@ -29,7 +29,7 @@ public class VHSCatalogApplication {
 		OpenTracingSparkFilters sparkTracingFilters = new OpenTracingSparkFilters();
 		Spark.before(sparkTracingFilters.before());
 		Spark.before((req, res) -> {
-			req.headers().forEach(System.out::println);
+			req.headers().forEach(key -> System.out.println(key + ": " + req.headers(key)));
 		});
 		Spark.afterAfter(sparkTracingFilters.afterAfter());
 		Spark.exception(Exception.class, sparkTracingFilters.exception());
@@ -42,12 +42,17 @@ public class VHSCatalogApplication {
 
 	private static Object getMovie(Request req, Response res) {
 		res.type("application/json");
+
+		Span parentSpan = req.attribute(OpenTracingSparkFilters.SERVER_SPAN);
+		System.out.println("Parent Baggage Item: " + parentSpan.getBaggageItem("testBaggageItem".toLowerCase()));
 		
 		Span span = GlobalTracer.get()
 				.buildSpan("getMovie")
 				.asChildOf((Span) req.attribute(OpenTracingSparkFilters.SERVER_SPAN))
 				.withTag("moveId", req.params("id"))
 				.start();
+
+		System.out.println("Baggage Item: " + span.getBaggageItem("testBaggageItem".toLowerCase()));
 
 		Movie movie = movies.findOneById(Integer.parseInt(req.params("id")));
 		
